@@ -32,14 +32,15 @@ defineProps<{ items: StatItem[] }>();
 .stat-bar__item {
   padding: 14px 16px;
   border: 1px solid var(--line);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--bg-panel) 84%, transparent);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
 }
 
 .stat-bar__item strong {
   display: block;
-  font-family: var(--font-display);
-  font-size: 24px;
+  font-family: var(--font-sans);
+  font-size: 22px;
+  font-weight: 700;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
@@ -47,8 +48,9 @@ defineProps<{ items: StatItem[] }>();
 .stat-bar__item span {
   display: block;
   margin-top: 5px;
-  color: var(--ink-soft);
-  font-size: 11px;
+  color: var(--ink-faint);
+  font-size: 10px;
+  letter-spacing: 0.04em;
 }
 
 .stat-bar__item[data-tone="warning"] strong {

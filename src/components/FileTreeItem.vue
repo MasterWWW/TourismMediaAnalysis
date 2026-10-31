@@ -67,7 +67,10 @@ function toggleFromRow() {
   <div
     class="file-row"
     :data-action="item.action"
-    :class="{ 'file-row--grouped': item.group_id }"
+    :class="{
+      'file-row--grouped': item.group_id,
+      'file-row--deselected': !item.selected && item.action !== 'keep',
+    }"
   >
     <MediaPreview :item="item" />
 
@@ -106,46 +109,87 @@ function toggleFromRow() {
 
 <style scoped>
 .file-row {
+  position: relative;
   display: grid;
   grid-template-columns: 48px 26px minmax(0, 1fr);
-  gap: 8px;
-  padding: 12px 14px;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
   border-bottom: 1px solid var(--line);
   background: var(--bg-panel);
+  transition: background 160ms var(--ease-out);
 }
 
 .file-row:last-child {
   border-bottom: none;
 }
 
+.file-row::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: transparent;
+  content: "";
+  transition: background 160ms var(--ease-out);
+}
+
+.file-row:hover {
+  background: color-mix(in srgb, var(--bg-soft) 34%, var(--bg-panel));
+}
+
 .file-row[data-action="isolate"] {
-  background: color-mix(in srgb, var(--warm-soft) 52%, var(--bg-panel));
+  background: color-mix(in srgb, var(--warm-soft) 44%, var(--bg-panel));
+}
+
+.file-row[data-action="isolate"]::before {
+  background: var(--warm);
 }
 
 .file-row[data-action="unresolved"] {
-  background: color-mix(in srgb, #f5e7d4 56%, var(--bg-panel));
+  background: color-mix(in srgb, var(--warm-soft) 58%, var(--bg-panel));
+}
+
+.file-row[data-action="archive"]::before {
+  background: var(--accent);
 }
 
 .file-row[data-action="keep"] {
-  opacity: 0.66;
+  opacity: 0.6;
+}
+
+.file-row--deselected {
+  opacity: 0.62;
+}
+
+.file-row--deselected .file-row__body,
+.file-row--deselected .media-preview {
+  filter: grayscale(0.7);
 }
 
 .file-row__check {
-  padding-top: 2px;
+  display: grid;
+  place-items: center;
 }
 
 .file-row__check input {
+  width: 15px;
+  height: 15px;
   accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.file-row__check input:disabled {
+  cursor: not-allowed;
 }
 
 .file-row__body {
   min-width: 0;
   cursor: pointer;
   outline: none;
+  border-radius: 8px;
 }
 
 .file-row__body:focus-visible {
-  border-radius: 8px;
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
@@ -185,21 +229,25 @@ function toggleFromRow() {
 .action-pill {
   color: var(--accent);
   background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 .action-pill[data-action="isolate"] {
   color: #8a4a13;
-  background: #f3dfc9;
+  background: var(--warm-soft);
+  border-color: color-mix(in srgb, var(--warm) 30%, transparent);
 }
 
 .action-pill[data-action="unresolved"] {
   color: #82591f;
-  background: #f6e9ca;
+  background: var(--warm-soft);
+  border-color: color-mix(in srgb, var(--warm) 24%, transparent);
 }
 
 .action-pill[data-action="keep"] {
   color: var(--ink-soft);
   background: var(--bg-soft);
+  border-color: var(--line);
 }
 
 .group-pill {

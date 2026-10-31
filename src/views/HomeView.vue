@@ -112,6 +112,18 @@ function next() {
 
 .hero {
   padding: 12px 2px 4px;
+  animation: page-in 320ms var(--ease-out) both;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .eyebrow {
@@ -187,8 +199,13 @@ function next() {
   gap: 8px;
   padding: 11px 12px;
   border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--bg-soft);
+  border-radius: var(--radius-sm);
+  background: var(--bg-inset);
+  transition: border-color 150ms var(--ease-out);
+}
+
+.source-list li:not(.empty-state):hover {
+  border-color: var(--line-strong);
 }
 
 .source-list__icon {
@@ -205,10 +222,17 @@ function next() {
 
 .source-list button {
   border: 0;
+  border-radius: 6px;
   background: transparent;
   color: var(--ink-soft);
   font-size: 17px;
   cursor: pointer;
+  transition: color 150ms var(--ease-out), background 150ms var(--ease-out);
+}
+
+.source-list button:hover {
+  background: var(--bg-soft);
+  color: var(--danger);
 }
 
 .empty-state {
@@ -223,9 +247,9 @@ function next() {
 .target-box {
   min-height: 151px;
   padding: 22px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   background:
-    linear-gradient(145deg, color-mix(in srgb, var(--accent-soft) 68%, white), var(--bg-panel));
+    linear-gradient(145deg, color-mix(in srgb, var(--accent-soft) 62%, var(--bg-panel)), var(--bg-panel));
   border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--line));
 }
 

@@ -6,6 +6,7 @@ import type { PlanItem } from "../api/types";
 const props = defineProps<{ item: PlanItem }>();
 const open = ref(false);
 const failed = ref(false);
+const zoomed = ref(false);
 
 const canUseAssetProtocol = isTauri();
 const src = computed(() =>
@@ -29,7 +30,17 @@ function openPreview() {
     return;
   }
   failed.value = false;
+  zoomed.value = false;
   open.value = true;
+}
+
+function closePreview() {
+  open.value = false;
+  zoomed.value = false;
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === "Escape") closePreview();
 }
 </script>
 
@@ -56,13 +67,23 @@ function openPreview() {
   </button>
 
   <Teleport to="body">
-    <div v-if="open" class="media-lightbox" role="dialog" aria-modal="true" @click="open = false">
-      <button class="media-lightbox__close" aria-label="关闭预览" @click="open = false">×</button>
+    <div
+      v-if="open"
+      class="media-lightbox"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      @click="closePreview"
+      @keydown="onKeydown"
+      @vue:mounted="($el as HTMLElement).focus()"
+    >
+      <button class="media-lightbox__close" aria-label="关闭预览" @click="closePreview">×</button>
       <img
         v-if="item.kind === 'photo' && !failed"
         :src="src"
+        :class="{ 'media-lightbox__media--zoomed': zoomed }"
         alt=""
-        @click.stop
+        @click.stop="zoomed = !zoomed"
         @error="failed = true"
       />
       <video
@@ -87,10 +108,19 @@ function openPreview() {
   place-items: center;
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--bg-soft);
   color: var(--ink-soft);
   cursor: zoom-in;
+  padding: 0;
+  transition:
+    transform 140ms var(--ease-out),
+    box-shadow 140ms var(--ease-out);
+}
+
+.media-preview:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px -10px rgba(35, 36, 31, 0.5);
 }
 
 .media-preview:disabled {
@@ -116,22 +146,41 @@ function openPreview() {
 
 .media-lightbox {
   position: fixed;
-  z-index: 30;
+  z-index: 60;
   inset: 0;
   display: grid;
   place-items: center;
-  padding: 36px;
-  background: rgba(20, 20, 20, 0.78);
+  padding: 40px;
+  background: rgba(26, 24, 18, 0.86);
+  backdrop-filter: blur(6px);
   cursor: zoom-out;
+  outline: none;
+  animation: lightbox-in 180ms var(--ease-out);
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .media-lightbox img,
 .media-lightbox video {
   max-width: min(1100px, 92vw);
   max-height: 84vh;
-  border-radius: 14px;
-  background: #0f0f0f;
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius);
+  background: #14130f;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.5);
+}
+
+.media-lightbox__media--zoomed {
+  max-width: none;
+  max-height: none;
+  cursor: zoom-out;
 }
 
 .media-lightbox__close {
@@ -144,10 +193,15 @@ function openPreview() {
   place-items: center;
   border: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.14);
   color: white;
   font-size: 26px;
   cursor: pointer;
+  transition: background 140ms var(--ease-out);
+}
+
+.media-lightbox__close:hover {
+  background: rgba(255, 255, 255, 0.28);
 }
 
 .media-lightbox__message {

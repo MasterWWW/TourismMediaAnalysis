@@ -121,6 +121,18 @@ async function cancel() {
   display: grid;
   gap: 24px;
   padding-top: 20px;
+  animation: page-in 320ms var(--ease-out) both;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .scan-head {

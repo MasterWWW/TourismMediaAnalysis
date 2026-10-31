@@ -13,16 +13,22 @@ body {
   font-family: var(--font-sans);
   color: var(--ink);
   background:
-    radial-gradient(1200px 500px at 10% -10%, #e6f4ee 0%, transparent 55%),
-    radial-gradient(900px 400px at 100% 0%, #f6e9d8 0%, transparent 50%),
+    radial-gradient(1100px 460px at 12% -8%, #e3ece4 0%, transparent 55%),
+    radial-gradient(820px 380px at 98% 2%, #f3e5cf 0%, transparent 52%),
     var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
 }
 
 .shell {
   min-height: 100%;
-  max-width: 1180px;
+  max-width: 1220px;
   margin: 0 auto;
-  padding: 40px 28px 64px;
+  padding: 36px 32px 72px;
 }
 
 .shell__header {
@@ -30,8 +36,8 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding-bottom: 22px;
-  border-bottom: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
 }
 
 .shell__brand {
@@ -41,28 +47,32 @@ body {
 }
 
 .shell__dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
   background: var(--accent);
-  box-shadow: 0 0 0 6px var(--accent-soft);
+  background-image:
+    linear-gradient(135deg, transparent 42%, var(--accent-ink) 42%, var(--accent-ink) 58%, transparent 58%),
+    radial-gradient(circle at 30% 32%, var(--warm) 0 18%, transparent 19%);
+  box-shadow: 0 0 0 5px var(--accent-soft);
 }
 
 .shell__header h1 {
   margin: 0;
-  font-size: 16px;
-  letter-spacing: -0.01em;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 .shell__main {
-  padding: 28px 0 44px;
+  padding: 26px 0 48px;
 }
 
 .shell__footer {
   display: flex;
   justify-content: space-between;
-  padding-top: 18px;
-  border-top: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
   color: var(--ink-soft);
   font-family: var(--font-mono);
   font-size: 9px;
@@ -72,34 +82,39 @@ body {
 .flow {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg-panel);
 }
 
 .flow__step {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 9px;
+  gap: 6px;
+  padding: 6px 11px;
   border-radius: 999px;
   color: var(--ink-soft);
   font-size: 10px;
   white-space: nowrap;
+  transition: background 160ms var(--ease-out), color 160ms var(--ease-out);
 }
 
 .flow__step i {
   font-family: var(--font-mono);
   font-size: 8px;
   font-style: normal;
-  opacity: 0.65;
+  opacity: 0.6;
 }
 
 .flow__step--active {
-  background: var(--accent);
+  background: var(--accent-strong);
   color: var(--accent-ink);
 }
 
 .flow__step--done {
-  color: var(--accent);
+  color: var(--accent-strong);
 }
 
 .scan {
@@ -119,7 +134,7 @@ body {
   background: var(--bg-panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  box-shadow: 0 10px 24px rgba(29, 29, 31, 0.04);
+  box-shadow: var(--shadow-card);
 }
 
 .card--full {
@@ -211,14 +226,35 @@ body {
 }
 
 .btn {
+  position: relative;
   padding: 10px 18px;
-  border: 1px solid transparent;
-  border-radius: 9px;
+  border: 1px solid var(--accent-strong);
+  border-radius: 10px;
   background: var(--accent);
   color: var(--accent-ink);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  transition:
+    transform 140ms var(--ease-out),
+    box-shadow 140ms var(--ease-out),
+    background 140ms var(--ease-out),
+    border-color 140ms var(--ease-out);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px -10px rgba(18, 60, 48, 0.65);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--accent-soft);
+  outline-offset: 2px;
 }
 
 .btn--large {
@@ -229,17 +265,18 @@ body {
 
 .btn--danger {
   background: var(--danger);
+  border-color: var(--danger);
 }
 
 .btn:disabled {
-  opacity: 0.4;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
 .btn--ghost {
   background: transparent;
   color: var(--ink);
-  border-color: var(--line);
+  border-color: var(--line-strong);
 }
 
 .error {

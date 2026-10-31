@@ -43,11 +43,8 @@ const filteredItems = computed(() => {
 const tree = computed<YearBucket[]>(() => {
   const years = new Map<string, Map<string, MonthBucket>>();
   for (const item of filteredItems.value) {
-    const parsed = item.date ? new Date(item.date) : null;
-    const year = parsed ? String(parsed.getUTCFullYear()) : "未确定";
-    const month = parsed
-      ? `${year}-${String(parsed.getUTCMonth() + 1).padStart(2, "0")}`
-      : "unresolved";
+    const year = item.date ? item.date.slice(0, 4) : "未确定";
+    const month = item.date ? item.date.slice(0, 7) : "unresolved";
     if (!years.has(year)) years.set(year, new Map());
     const months = years.get(year)!;
     if (!months.has(month)) {
@@ -237,17 +234,23 @@ function showMore(month: MonthBucket) {
 
     <div class="plan-toolbar card">
       <div class="filter-tabs">
-        <button :class="{ active: filter === 'all' }" @click="filter = 'all'">
+        <button
+          :class="{ active: filter === 'all' }"
+          :aria-pressed="filter === 'all'"
+          @click="filter = 'all'"
+        >
           全部 {{ store.planItems.length }}
         </button>
         <button
           :class="{ active: filter === 'duplicates' }"
+          :aria-pressed="filter === 'duplicates'"
           @click="filter = 'duplicates'"
         >
-          重复与相似
+          重复与相似 {{ duplicateGroups.length }}
         </button>
         <button
           :class="{ active: filter === 'unresolved' }"
+          :aria-pressed="filter === 'unresolved'"
           @click="filter = 'unresolved'"
         >
           日期未知
@@ -284,9 +287,9 @@ function showMore(month: MonthBucket) {
           :open="yearIndex === 0"
         >
           <summary>
-            <span class="year-group__marker" />
+            <span class="year-group__chevron" aria-hidden="true">›</span>
             <strong>{{ year.label }}</strong>
-            <span>{{ year.count }} 个文件</span>
+            <span class="year-group__count">{{ year.count }} 个文件</span>
           </summary>
           <details
             v-for="month in year.months"
@@ -388,6 +391,18 @@ function showMore(month: MonthBucket) {
 .plan-page {
   display: grid;
   gap: 18px;
+  animation: page-in 320ms var(--ease-out) both;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .plan-head {
@@ -459,32 +474,45 @@ function showMore(month: MonthBucket) {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 10px;
+  padding: 8px 10px;
 }
 
 .filter-tabs {
   display: flex;
   gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg-inset);
 }
 
 .filter-tabs button,
 .selection-actions button {
   border: 0;
-  border-radius: 8px;
+  border-radius: 999px;
   background: transparent;
   color: var(--ink-soft);
   font-size: 11px;
   cursor: pointer;
+  transition:
+    background 150ms var(--ease-out),
+    color 150ms var(--ease-out),
+    box-shadow 150ms var(--ease-out);
 }
 
 .filter-tabs button {
-  padding: 8px 11px;
+  padding: 7px 12px;
 }
 
 .filter-tabs button.active {
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--bg-panel);
+  color: var(--accent-strong);
   font-weight: 700;
+  box-shadow: var(--shadow-card);
+}
+
+.filter-tabs button:hover:not(.active) {
+  color: var(--ink);
 }
 
 .selection-actions {
@@ -495,10 +523,21 @@ function showMore(month: MonthBucket) {
 .selection-actions button {
   padding: 8px 9px;
   border: 1px solid var(--line);
+  border-radius: 9px;
+}
+
+.selection-actions button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent-strong);
 }
 
 .selection-actions button:disabled {
   opacity: 0.35;
+}
+
+button:focus-visible {
+  outline: 3px solid var(--accent-soft);
+  outline-offset: 1px;
 }
 
 .plan-grid {
@@ -550,25 +589,36 @@ function showMore(month: MonthBucket) {
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 14px 18px;
+  padding: 13px 18px;
   border-bottom: 1px solid var(--line);
-  background: var(--bg-soft);
+  background: var(--bg-inset);
   font-size: 12px;
   cursor: pointer;
   list-style: none;
 }
 
-.year-group > summary span:last-child {
+.year-group > summary:hover {
+  background: color-mix(in srgb, var(--bg-soft) 70%, var(--bg-inset));
+}
+
+.year-group__count {
   margin-left: auto;
   color: var(--ink-soft);
   font-size: 10px;
 }
 
-.year-group__marker {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent);
+.year-group__chevron {
+  display: inline-block;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  transform: rotate(0deg);
+  transition: transform 180ms var(--ease-out);
+}
+
+.year-group[open] > summary .year-group__chevron {
+  transform: rotate(90deg);
 }
 
 .month-group > summary {
@@ -581,6 +631,11 @@ function showMore(month: MonthBucket) {
   font-size: 10px;
   cursor: pointer;
   list-style: none;
+  transition: background 150ms var(--ease-out);
+}
+
+.month-group > summary:hover {
+  background: color-mix(in srgb, var(--bg-soft) 40%, var(--bg-panel));
 }
 
 .month-group > summary::-webkit-details-marker,
@@ -605,9 +660,23 @@ function showMore(month: MonthBucket) {
 }
 
 .dupe-list {
-  max-height: 440px;
+  max-height: 480px;
   margin-top: 14px;
   overflow: auto;
+  padding-right: 2px;
+}
+
+.dupe-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dupe-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--line-strong);
+}
+
+.dupe-list::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-faint);
 }
 
 .empty-plan {
@@ -626,8 +695,9 @@ function showMore(month: MonthBucket) {
 .commit-card {
   display: grid;
   gap: 8px;
+  border-color: color-mix(in srgb, var(--accent) 26%, var(--line));
   background:
-    linear-gradient(150deg, color-mix(in srgb, var(--accent-soft) 72%, white), var(--bg-panel));
+    linear-gradient(155deg, color-mix(in srgb, var(--accent-soft) 62%, var(--bg-panel)), var(--bg-panel) 62%);
 }
 
 .commit-card__label {

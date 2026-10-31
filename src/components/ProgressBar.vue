@@ -47,7 +47,7 @@ defineProps<{
 .progress__fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent), #3dbd91);
+  background: linear-gradient(90deg, var(--accent-strong), var(--accent));
   transition: width 240ms ease;
 }
 
@@ -57,7 +57,7 @@ defineProps<{
 }
 
 .progress__fill--warm {
-  background: linear-gradient(90deg, #c46e2d, #e1a34e);
+  background: linear-gradient(90deg, var(--warm), #dd9450);
 }
 
 @keyframes indeterminate {

@@ -264,6 +264,18 @@ async function start() {
 .configure {
   display: grid;
   gap: 20px;
+  animation: page-in 320ms var(--ease-out) both;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .section-head {
@@ -441,7 +453,13 @@ async function start() {
   gap: 9px;
   padding: 11px 12px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-inset);
+  transition: border-color 150ms var(--ease-out);
+}
+
+.priority-list li:hover {
+  border-color: var(--line-strong);
 }
 
 .priority-list__index {
@@ -474,6 +492,12 @@ async function start() {
   background: var(--bg-panel);
   color: var(--ink);
   cursor: pointer;
+  transition: border-color 140ms var(--ease-out), color 140ms var(--ease-out);
+}
+
+.priority-list__actions button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent-strong);
 }
 
 .priority-list__actions button:disabled {
