@@ -1,0 +1,15 @@
+# Node
+node_modules/
+dist/
+dist-ssr/
+
+# Rust
+src-tauri/target/
+src-tauri/gen/schemas/
+
+# 产物与系统文件
+*.log
+.DS_Store
+
+# pnpm 本地存储
+.pnpm-store/

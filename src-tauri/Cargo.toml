@@ -1,0 +1,48 @@
+# 依赖清单：仅列出本项目所需的 crate。
+# exiftool / ffprobe 为运行时外部命令（非 crate），在运行期通过 PATH 探测，缺失时优雅降级。
+[package]
+name = "tourism-media-organizer"
+version = "0.1.0"
+description = "旅游照片/视频整理与去重工具"
+edition = "2021"
+rust-version = "1.77"
+
+[lib]
+name = "tourism_media_organizer_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# GUI 外壳与桥接
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-dialog = "2"
+
+# 序列化与前后端契约
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# 遍历与并行
+jwalk = "0.8"          # 并行目录枚举
+rayon = "1"            # 数据并行
+blake3 = { version = "1", features = ["rayon"] }  # 字节级去重哈希（多线程）
+
+# 元数据与感知哈希
+kamadak-exif = "0.5"   # JPEG 快路径（lib 名称为 exif）
+image = "0.25"         # 图片解码（dHash 感知哈希，见 dedup/perceptual.rs）
+
+# 时间、唯一标识、路径
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+directories = "5"
+
+# 错误与日志
+thiserror = "2"
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-appender = "0.2"
+
+[dev-dependencies]
+tempfile = "3"

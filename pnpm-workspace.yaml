@@ -1,0 +1,4 @@
+# pnpm 11：明确允许这两个包的安装脚本
+allowBuilds:
+  esbuild: true
+  vue-demi: true

@@ -1,0 +1,21 @@
+:root {
+  --font-sans: "Avenir Next", "PingFang SC", "Microsoft YaHei UI", "Noto Sans SC",
+    "Helvetica Neue", sans-serif;
+  --font-display: "Iowan Old Style", "Songti SC", "STSong", "Source Han Serif SC",
+    "Noto Serif SC", "Microsoft YaHei", serif;
+  --font-mono: "SF Mono", "JetBrains Mono", "Cascadia Mono", ui-monospace, monospace;
+  --bg: #f4f1ea;
+  --bg-soft: #ebe5d9;
+  --bg-panel: #ffffff;
+  --ink: #1d1d1f;
+  --ink-soft: #6e6e73;
+  --accent: #0a8463;
+  --accent-soft: #d9efe7;
+  --accent-ink: #ffffff;
+  --warm: #b45f24;
+  --warm-soft: #f5e2cf;
+  --line: #e2ddd2;
+  --line-strong: #cfc7b8;
+  --danger: #b42318;
+  --radius: 14px;
+}
